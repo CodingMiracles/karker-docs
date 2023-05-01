@@ -1,0 +1,488 @@
+openapi: 3.0.3
+
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+servers:
+  - url: 'https'
+
+paths:
+#  /image:
+#    get:
+#      summary: create new image
+#      description: create new image
+# form data that receive an image
+
+  /signup:
+    post:
+      tags:
+        - identity
+      summary: register new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDTO'
+      responses:
+        '200':
+          description: success Response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        type: string
+
+  /login:
+    post:
+      tags:
+        - identity
+      summary: login with username and password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: 'shifa'
+                password:
+                  type: string
+                  example: 'shifa-123'
+      responses:
+        '200':
+          description: successful login
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/TokenDTO'
+
+  /reactions:
+    get:
+      tags:
+        - reaction
+      summary: get reactions
+      responses:
+        '200':
+          description: success response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/GetReactionDTO'
+  /posts:
+    get:
+      tags:
+        - post
+      summary: get all posts
+      description: get all posts
+      parameters:
+        - name: page
+          in: query
+          description: page number
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: pageSize
+          in: query
+          description: page size
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: the description of successful response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/GetPostDTO'
+    post:
+      tags:
+        - post
+      summary: create new post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostPostDTO'
+      responses:
+        '200':
+          description: success response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GetPostDTO'
+    put:
+      tags:
+        - post
+      summary: edit post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePostDTO'
+      responses:
+        '200':
+          description: success response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GetPostDTO'
+  /posts/{postId}:
+    delete:
+      tags:
+        - post
+      summary: delete post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: success response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        type: string
+
+
+  /posts/{postId}/react:
+    post:
+      tags:
+        - reaction
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reactionType:
+                  type: string
+                  example: "like"
+      responses:
+        '200':
+          description: success response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GetPostDTO'
+    delete:
+      tags:
+        - reaction
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GetPostDTO'
+
+
+  /posts/{postId}/comment:
+    get:
+      tags:
+        - comment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: success reponse
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/GetPostDTO'
+    post:
+      tags:
+        - comment
+      parameters:
+        - name: postId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCommentDTO'
+      responses:
+        '200':
+          description: success response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GetPostDTO'
+
+  /posts/{postId}/comment/{commentId}:
+    put:
+      tags:
+        - comment
+      parameters:
+        - name: postId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: commentId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditCommentDTO'
+      responses:
+        '200':
+          description: success response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GetPostDTO'
+    delete:
+      tags:
+        - comment
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: commentId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GetPostDTO'
+
+components:
+  schemas:
+    Response:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: string
+
+    CreateUserDTO:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: 'kenan'
+        lastName:
+          type: string
+          example: 'rawashdeh'
+        birthDate:
+          type: string
+          example: '01-05-1997'
+        email:
+          type: string
+          example: 'kenan@gmail.com'
+        password:
+          type: string
+          example: 'kenan-123'
+
+    TokenDTO:
+      type: object
+      properties:
+        token:
+          type: string
+        refreshToken:
+          type: string
+
+    GetReactionDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '6c829b6b-fa9b-4d62-b5c1-c946ebbe7b85'
+        type:
+          type: string
+          example: 'funny'
+
+    GetPostDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        imageUrl:
+          type: string
+        content:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        reactions:
+          description: number of reactions
+          type: integer
+        comments:
+          description: number of comments
+          type: integer
+        type:
+          type: string
+          example: "mem"
+        isLike:
+          type: boolean
+          example: true
+        user:
+          type: object
+          properties:
+            name:
+              type: string
+              example: 'kenan'
+            imageUrl:
+              type: string
+              example: 'image url'
+
+    # image or content is required but not both of them
+    PostPostDTO:
+      type: object
+      properties:
+        imageId:
+          description: image data base64 encoded
+          type: string
+        content:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    UpdatePostDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        imageId:
+          description: image data base64 encoded
+          type: string
+        content:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+
+    PostCommentDTO:
+      type: object
+      properties:
+        content:
+          type: string
+    EditCommentDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
