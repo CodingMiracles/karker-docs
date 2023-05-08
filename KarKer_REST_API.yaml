@@ -14,30 +14,7 @@ paths:
 #      description: create new image
 # form data that receive an image
 
-  /signup:
-    post:
-      tags:
-        - identity
-      summary: register new user
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUserDTO'
-      responses:
-        '200':
-          description: success Response
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/Response'
-                  - type: object
-                    properties:
-                      data:
-                        type: string
-
-  /login:
+  /auth/login:
     post:
       tags:
         - identity
@@ -67,6 +44,31 @@ paths:
                       data:
                         $ref: '#/components/schemas/TokenDTO'
 
+  /auth/refresh-token:
+    post:
+      tags:
+        - identity
+      summary: get new refresh token 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              example: aöldskfja-asöldfkjasd-aösldfkj
+      responses:
+        '200':
+          description: successfully get refresh token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data: 
+                        type: string
+                        example: aölkdsfjaöl-asödlfkaj-asdöflka
+  
   /reactions:
     get:
       tags:
@@ -362,6 +364,31 @@ paths:
                       data:
                         $ref: '#/components/schemas/GetPostDTO'
 
+  /user:
+     post:
+      tags:
+        - identity
+      summary: register new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDTO'
+      responses:
+        '200':
+          description: success Response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Response'
+                  - type: object
+                    properties:
+                      data:
+                        type: string
+                        example: user-id
+                        description: user id
+
 components:
   schemas:
     Response:
@@ -369,6 +396,8 @@ components:
       properties:
         success:
           type: boolean
+        errorMessage:
+          type: string
         errors:
           type: array
           items:
@@ -392,6 +421,9 @@ components:
         password:
           type: string
           example: 'kenan-123'
+        gender: 
+          type: string
+          example: female
 
     TokenDTO:
       type: object
